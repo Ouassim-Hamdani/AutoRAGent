@@ -3,9 +3,39 @@ import requests
 import uuid, os, json
 
 st.set_page_config("AutoRAGent", page_icon="🤖")
-st.title("🤖 AutoRAGent - Autonomous Knowledge Assistant")
+st.title("📖 AutoRAGent")
 
 API_URL = "http://localhost:2003"
+
+# SIDEBAR - Collections Preview
+with st.sidebar:
+    st.header("📚 Knowledge Base")
+    if st.button("Refresh Collections"):
+        st.rerun()
+    
+    try:
+        response = requests.get(f"{API_URL}/collections")
+        if response.status_code == 200:
+            data = response.json()
+            collections = data.get("collections", [])
+            
+            if not collections:
+                st.info("No collections found.")
+            
+            for col in collections:
+                with st.expander(f"📂 {col['name']}"):
+                    preview_docs = col.get("preview", [])
+                    if preview_docs:
+                        for i, doc in enumerate(preview_docs):
+                            with st.container(border=True):
+                                st.caption(f"📄 **Chunk {i+1}**")
+                                st.markdown(f"_{doc[:150]}..._" if len(doc) > 150 else f"_{doc}_")
+                    else:
+                        st.caption("🚫 *Empty collection*")
+        else:
+            st.error("Failed to fetch collections")
+    except Exception as e:
+        st.error(f"Connection error: {e}")
 
 # STATE MANEGEMENT
 if "messages" not in st.session_state:
@@ -130,6 +160,5 @@ if prompt := st.chat_input("What is up?", accept_file="multiple", file_type=["cs
         st.session_state.history.append({"role": "assistant", "content": code_blocks[-1]})
     else:
          st.session_state.history.append({"role": "assistant", "content": final_answer})
-
-
-
+    
+    st.rerun()
