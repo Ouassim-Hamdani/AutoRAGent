@@ -22,15 +22,15 @@ class AutoRAGENT:
                                additional_authorized_imports=['pandas', "os", 'matplotlib.*', "numpy.*", "seaborn.*",
                                                               "csv", "json", "posixpath"], max_steps=max_steps)
 
-    def __call__(self, query, history=None, stream=False, session_id=None):
+    def __call__(self, query=None, history=None, stream=False, session_id=None):
         prompt = PROMPT
         if session_id:
             prompt += f"Session ID : {session_id}\n\n"
         
         if history:
             prompt += f"     Current History of Conversation : {history}\n\n"
-        
-        prompt += f"    User Question : {query}"
+        if query:
+            prompt += f"    User Question : {query}"
 
         if stream:
             return self._stream_generator(prompt)

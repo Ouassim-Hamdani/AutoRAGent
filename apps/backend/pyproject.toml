@@ -13,6 +13,7 @@ dependencies = [
     "langchain-huggingface>=1.2.0",
     "matplotlib>=3.10.8",
     "python-dotenv>=1.2.1",
+    "python-multipart>=0.0.21",
     "seaborn>=0.13.2",
     "sentence-transformers>=5.2.0",
     "smolagents[openai]>=1.23.0",

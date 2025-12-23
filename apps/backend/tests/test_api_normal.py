@@ -6,17 +6,25 @@ def test_chat_stream():
     url = "http://localhost:2003/chat"
     
     # Test payload
+    # The new query is now the last element of the history
+    history = [
+        {
+            "role": "user",
+            "content": "Can you list all available collections in the vector database?",
+            "files_paths": []
+        }
+    ]
+    
     payload = {
-        "message": "Hello agent can you list me collections in the vector database?",
         "session_id": "test-session-001",
-        "history": None
+        "history": json.dumps(history) # Send as JSON string
     }
 
     print(f"Sending request to {url}...")
     print("-" * 50)
 
     try:
-        with requests.post(url, json=payload, stream=True) as response:
+        with requests.post(url, data=payload, stream=True) as response:
             response.raise_for_status()
             
             for line in response.iter_lines():
@@ -26,7 +34,6 @@ def test_chat_stream():
                     try:
                         # Parse the NDJSON line
                         data = json.loads(decoded_line)
-                        print(data)
                         
                         event_type = data.get("type")
                         content = data.get("content")
