@@ -1,8 +1,8 @@
 from smolagents import tool
 
-from src.services.ragify import RagifyPipe
-from src.core.parser import Parser
-from src.core.DBHandler import VectorDBManager
+from services.ragify import RagifyPipe
+from core.parser import Parser
+from core.DBHandler import VectorDBManager
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -101,20 +101,6 @@ def query_collection(collection_name : str, query_text : str, k : int =5) -> str
 #    with open(filepath,'r') as f:
 #        return f.read()
     
-#@tool
-#def read_pdf_file(filepath : str) -> str:
-#    """
-#    This is a Tool that is in charge of reading a pdf file & returning the contents of it in form of markdown text.
-#    Args:
-#        filepath: File path of the pdf file you want to read.
-#    Returns :
-#        String content of the pdf file in form of markdown text.
-#    """
-#    if not os.path.exists(filepath):
-#        raise FileNotFoundError(f"Provided File Path : {filepath}, does not exist, please provide valid path!")
-#    converter = DocumentConverter() 			# Loading converter
-#    doc = converter.convert(filepath).document  # Converting
-#    return doc.export_to_markdown()				# Exporting .md
 
 if __name__ == "__main__":
     print(parse_document("../../samples/sample.pptx"))

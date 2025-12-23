@@ -1,8 +1,8 @@
 from smolagents import CodeAgent, PythonInterpreterTool, FinalAnswerTool, OpenAIServerModel, ToolCall, FinalAnswerStep
 import os, json
 
-from tools import ragify_document,parse_document,list_collections,query_collection
-from prompt import PROMPT
+from agent.tools import ragify_document,parse_document,list_collections,query_collection
+from agent.prompt import PROMPT
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,18 +23,24 @@ class AutoRAGENT:
                                                               "csv", "json", "posixpath"], max_steps=max_steps)
 
     def __call__(self, query, history=None, stream=False, session_id=None):
+        prompt = PROMPT
+        if session_id:
+            prompt += f"Session ID : {session_id}\n\n"
+        
         if history:
-            if session_id:
-                return self.agent.run(
-                    PROMPT + f"Session ID : {session_id}\n\n     Current History of Conversation : {history}\n\n   User New Question : {query}",
-                    stream=stream)
-            return self.agent.run(
-                PROMPT + f"Current History of Conversation : {history}\n\n   User New Question : {query}",
-                stream=stream)
-        else:
-            if session_id:
-                self.agent.run(PROMPT + f"Session ID : {session_id}\n\n    User Question : {query}", stream=stream)
-            return self.agent.run(PROMPT + f"User Question : {query}", stream=stream)
+            prompt += f"     Current History of Conversation : {history}\n\n"
+        
+        prompt += f"    User Question : {query}"
+
+        if stream:
+            return self._stream_generator(prompt)
+        return self.agent.run(prompt, stream=False)
+
+    def _stream_generator(self, prompt):
+        for step in self.agent.run(prompt, stream=True):
+            content, type_ = self.parse_step(step)
+            if content:
+                yield json.dumps({"type": type_, "content": content}) + "\n"
 
     def parse_step(self, step):
         if type(step) == ToolCall and step.name == "python_interpreter":

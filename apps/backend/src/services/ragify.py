@@ -1,6 +1,6 @@
-from src.core.parser import Parser
-from src.core.chunker import Chunker
-from src.core.DBHandler import VectorDBManager
+from core.parser import Parser
+from core.chunker import Chunker
+from core.DBHandler import VectorDBManager
 class RagifyPipe:
     def __init__(self):
         self.parser = Parser()
