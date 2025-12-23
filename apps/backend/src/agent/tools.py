@@ -59,7 +59,7 @@ def query_collection(collection_name : str, query_text : str, k : int =5) -> str
     """
     db_manager = VectorDBManager()
     results = db_manager.query(collection_name,query_text,k)
-    combined_content = "\n\n".join([doc.page_content for doc in results]) # add page number & source later
+    combined_content = "\n----------------------------\n\n-------------------------\n".join([f"Source: {doc.metadata.get('source', 'Unknown')} (Page {str(doc.metadata.get('page_numbers', 'Unknown'))})\nContent:\n{doc.page_content}" for doc in results])
     return combined_content
 
 #@tool
@@ -103,4 +103,4 @@ def query_collection(collection_name : str, query_text : str, k : int =5) -> str
     
 
 if __name__ == "__main__":
-    print(parse_document("../../samples/sample.pptx"))
+    print(query_collection("hotels",""))
