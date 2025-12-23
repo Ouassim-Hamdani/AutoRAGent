@@ -1,0 +1,6 @@
+# ignore all venves
+**/.venv/
+**/__pycache__/
+samples/
+/apps/backend/.env
+
