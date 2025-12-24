@@ -26,6 +26,13 @@ services:
       - database
     networks:
       - autoragent-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 
   frontend:
     build: ./apps/frontend
