@@ -5,7 +5,8 @@ from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.documents import Document
 from typing import List, Optional, Dict
-
+from dotenv import load_dotenv
+load_dotenv()
 class VectorDBManager:
     """
     Central Manager for the ChromaDB Server.
@@ -21,9 +22,9 @@ class VectorDBManager:
         )
 
         # 2. Connect to ChromaDB Server
-        chroma_host = os.getenv("CHROMA_HOST", "localhost")
-        chroma_port = int(os.getenv("CHROMA_PORT", 1989))
-        
+        chroma_host = os.getenv("DATABASE_HOST", "localhost")
+        chroma_port = int(os.getenv("DATABASE_PORT", 1989))
+        print(f"Connecting to ChromaDB at {chroma_host}:{chroma_port}...")
         self.client = chromadb.HttpClient(
             host=chroma_host, 
             port=chroma_port,

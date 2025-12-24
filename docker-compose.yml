@@ -1,0 +1,46 @@
+services:
+  database:
+    build: ./apps/database
+    container_name: autoragent-database
+    ports:
+      - "1989:1989"
+    volumes:
+      - ./apps/database/data:/chroma/data
+    networks:
+      - autoragent-network
+
+  backend:
+    build: ./apps/backend
+    container_name: autoragent-backend
+    ports:
+      - "2003:2003"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_HOST=database
+      - DATABASE_PORT=1989
+      - SESSIONS_FOLDER=/app/sessions/uploads
+    volumes:
+      - ./apps/database/data:/app/database/data
+    depends_on:
+      - database
+    networks:
+      - autoragent-network
+
+  frontend:
+    build: ./apps/frontend
+    container_name: autoragent-frontend
+    ports:
+      - "2001:2001"
+    env_file:
+      - .env
+    environment:
+      - BACKEND_URL=http://backend:2003
+    depends_on:
+      - backend
+    networks:
+      - autoragent-network
+
+networks:
+  autoragent-network:
+    driver: bridge

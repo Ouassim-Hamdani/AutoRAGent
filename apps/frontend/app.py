@@ -1,11 +1,13 @@
 import streamlit as st
 import requests
 import uuid, os, json
+from dotenv import load_dotenv
+load_dotenv()
 
 st.set_page_config("AutoRAGent", page_icon="🤖")
 st.title("📖 AutoRAGent")
 
-API_URL = "http://localhost:2003"
+API_URL = os.getenv("BACKEND_URL", "http://localhost:2003")
 
 # SIDEBAR - Collections Preview
 with st.sidebar:

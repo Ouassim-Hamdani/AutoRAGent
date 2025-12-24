@@ -1,11 +1,13 @@
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
+from typing import Optional, List
 import uvicorn
 from agent.agent import AutoRAGENT
 from core.DBHandler import VectorDBManager
 import os,shutil,json
+from dotenv import load_dotenv
+load_dotenv()
+
 app = FastAPI()
 agent = AutoRAGENT()
 try:
@@ -55,6 +57,12 @@ async def chat_endpoint(
     session_id: Optional[str] = Form(None),
     files: List[UploadFile] = File(None)
     ):
+    """
+    Chat endpoint that accepts conversation history, optional session ID, and file uploads.
+    - history: JSON string representing the conversation history.
+    - session_id: Optional session identifier.
+    - files: Optional list of uploaded files.
+    """
     if history:
             try:
                 history = json.loads(history)
@@ -87,4 +95,4 @@ async def chat_endpoint(
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=2003)
+    uvicorn.run(app, host=os.environ["BACKEND_HOST"], port=int(os.environ["BACKEND_PORT"]))
